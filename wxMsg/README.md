@@ -1,9 +1,11 @@
 # wxMsg
-**注意：需要一下公网ip（用来过企业微信可信IP，只使用一下）**  
+**注意：需要一下公网ip（用来通过企业微信可信IP认证，只使用一下）**  
 **本项目代码部署部分以部署在云服务器上进行演示**
+
 ## 目录
-* [企业微信接收消息服务器设置](#企业微信接收消息服务器设置)
-* [Node-RED微信推送能力流设置](#node-red微信推送能力流设置)
+  * [企业微信接收消息服务器设置](#企业微信接收消息服务器设置)
+  * [Node-RED微信推送能力流设置](#node-red微信推送能力流设置-)
+
 ## 企业微信接收消息服务器设置
 1. 将[code](code)文件夹上传至有公网ip的服务器，**_并进入code文件夹内_**  
     文件夹中的[WXWXBizMsgCrypt3.py](code/WXBizMsgCrypt3.py)与[ierror.py](code/ierror.py)均来自于github项目[weworkapi_python](https://github.com/sbzhu/weworkapi_python/tree/master/callback)
@@ -42,6 +44,7 @@
     * 退出虚拟环境  
         `(venv) deactivate`  
     * ctrl+c结束本步骤中启动的test.py  
-    * 关闭云服务器开放的8080端口
+    * 关闭云服务器开放的8080端口  
+
 ## Node-RED微信推送能力流设置  
 
