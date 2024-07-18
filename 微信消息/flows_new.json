@@ -1,0 +1,649 @@
+[
+    {
+        "id": "bb0cd5391e274e62",
+        "type": "tab",
+        "label": "微信推送能力",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ab2c2a58a70e073f",
+        "type": "http request",
+        "z": "bb0cd5391e274e62",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "",
+                "valueType": "msg",
+                "valueValue": "payload"
+            }
+        ],
+        "x": 660,
+        "y": 480,
+        "wires": [
+            [
+                "f33cabd0682cfbd2"
+            ]
+        ]
+    },
+    {
+        "id": "23bfcb29d228a740",
+        "type": "inject",
+        "z": "bb0cd5391e274e62",
+        "name": "测试用例",
+        "props": [
+            {
+                "p": "text",
+                "v": "这是条测试信息，爱来自HomeAssistant",
+                "vt": "str"
+            },
+            {
+                "p": "switch",
+                "v": "test",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 200,
+        "y": 480,
+        "wires": [
+            [
+                "b9c330bd3bec36dc"
+            ]
+        ]
+    },
+    {
+        "id": "f33cabd0682cfbd2",
+        "type": "debug",
+        "z": "bb0cd5391e274e62",
+        "name": "http返回",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "52a4a56f3ba2b2d7",
+        "type": "http request",
+        "z": "bb0cd5391e274e62",
+        "name": "获取access_token",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=公司ID&corpsecret=自建程序secret",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 260,
+        "wires": [
+            [
+                "a9a43564264e0130"
+            ]
+        ]
+    },
+    {
+        "id": "a9a43564264e0130",
+        "type": "json",
+        "z": "bb0cd5391e274e62",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 300,
+        "wires": [
+            [
+                "6b6a0441c4272627"
+            ]
+        ]
+    },
+    {
+        "id": "36b3359e64ae46ea",
+        "type": "function",
+        "z": "bb0cd5391e274e62",
+        "name": "判断access_token是否过期",
+        "func": "var timestampInSeconds = Math.floor(Date.now() / 1000);\nvar overtime = false;\nif(timestampInSeconds >= global.get(\"expiration_time\")){\n    overtime = true; \n}\nmsg.payload = overtime;\n//msg.topic = timestampInSeconds;//debug用\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// 部署节点后，此处添加的代码将运行一次。 \nvar timestampInSeconds = Math.floor(Date.now() / 1000);\nglobal.set(\"expiration_time\", timestampInSeconds);",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 380,
+        "wires": [
+            [
+                "3ba00d3b19e64a63"
+            ]
+        ]
+    },
+    {
+        "id": "3ba00d3b19e64a63",
+        "type": "switch",
+        "z": "bb0cd5391e274e62",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 390,
+        "y": 380,
+        "wires": [
+            [
+                "52a4a56f3ba2b2d7"
+            ],
+            [
+                "a9b6d6fd7c081714"
+            ]
+        ]
+    },
+    {
+        "id": "b9c330bd3bec36dc",
+        "type": "link out",
+        "z": "bb0cd5391e274e62",
+        "name": "link out 1",
+        "mode": "link",
+        "links": [
+            "fc923779a67189b6"
+        ],
+        "x": 295,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "fc923779a67189b6",
+        "type": "link in",
+        "z": "bb0cd5391e274e62",
+        "name": "link in 1",
+        "links": [
+            "b9c330bd3bec36dc",
+            "0bf78e67af7d6ad4"
+        ],
+        "x": 45,
+        "y": 380,
+        "wires": [
+            [
+                "36b3359e64ae46ea"
+            ]
+        ]
+    },
+    {
+        "id": "6b6a0441c4272627",
+        "type": "function",
+        "z": "bb0cd5391e274e62",
+        "name": "刷新access_token与过期时间戳",
+        "func": "var timestampInSeconds = Math.floor(Date.now() / 1000) + msg.payload.expires_in;\nglobal.set(\"expiration_time\", timestampInSeconds);\nglobal.set(\"access_token\", msg.payload.access_token);\n//msg.topic = timestampInSeconds;//debug用\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 340,
+        "wires": [
+            [
+                "a9b6d6fd7c081714"
+            ]
+        ]
+    },
+    {
+        "id": "a9b6d6fd7c081714",
+        "type": "switch",
+        "z": "bb0cd5391e274e62",
+        "name": "转回原流程",
+        "property": "switch",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "test",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "text",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 870,
+        "y": 380,
+        "wires": [
+            [
+                "1fe66bd080a79ac6"
+            ],
+            [
+                "de8211ee7bafc98c"
+            ]
+        ]
+    },
+    {
+        "id": "676135ae4502cfc5",
+        "type": "link in",
+        "z": "bb0cd5391e274e62",
+        "name": "link in 2",
+        "links": [
+            "1fe66bd080a79ac6"
+        ],
+        "x": 345,
+        "y": 480,
+        "wires": [
+            [
+                "69cd1bee46186455"
+            ]
+        ]
+    },
+    {
+        "id": "1fe66bd080a79ac6",
+        "type": "link out",
+        "z": "bb0cd5391e274e62",
+        "name": "link out 2",
+        "mode": "link",
+        "links": [
+            "676135ae4502cfc5"
+        ],
+        "x": 995,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "66350f19fc73d69b",
+        "type": "ha-text",
+        "z": "bb0cd5391e274e62",
+        "name": "微信文字消息",
+        "version": 1,
+        "debugenabled": false,
+        "inputs": 0,
+        "outputs": 1,
+        "entityConfig": "8e52fee7de914da2",
+        "mode": "listen",
+        "value": "payload",
+        "valueType": "msg",
+        "outputProperties": [
+            {
+                "property": "text",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "value"
+            },
+            {
+                "property": "previousValue",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "previousValue"
+            },
+            {
+                "property": "switch",
+                "propertyType": "msg",
+                "value": "text",
+                "valueType": "str"
+            }
+        ],
+        "x": 190,
+        "y": 560,
+        "wires": [
+            [
+                "0bf78e67af7d6ad4"
+            ]
+        ]
+    },
+    {
+        "id": "0bf78e67af7d6ad4",
+        "type": "link out",
+        "z": "bb0cd5391e274e62",
+        "name": "link out 3",
+        "mode": "link",
+        "links": [
+            "fc923779a67189b6"
+        ],
+        "x": 295,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "fe9ae5420016d72e",
+        "type": "link in",
+        "z": "bb0cd5391e274e62",
+        "name": "link in 3",
+        "links": [
+            "de8211ee7bafc98c"
+        ],
+        "x": 345,
+        "y": 560,
+        "wires": [
+            [
+                "69cd1bee46186455"
+            ]
+        ]
+    },
+    {
+        "id": "69cd1bee46186455",
+        "type": "function",
+        "z": "bb0cd5391e274e62",
+        "name": "生成请求",
+        "func": "msg.access_token = global.get(\"access_token\")\nmsg.payload = {\n    \"msgtype\": \"text\",\n    \"toparty\": \"\",//部门id\n    \"agentid\": 0,//自建应用AgentId\n    \"text\": {\n        \"content\": msg.text\n    }\n};\nmsg.url = \"https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=\" + global.get(\"access_token\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 480,
+        "wires": [
+            [
+                "ab2c2a58a70e073f"
+            ]
+        ]
+    },
+    {
+        "id": "de8211ee7bafc98c",
+        "type": "link out",
+        "z": "bb0cd5391e274e62",
+        "name": "link out 4",
+        "mode": "link",
+        "links": [
+            "fe9ae5420016d72e"
+        ],
+        "x": 995,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "3b961cef59ac21e8",
+        "type": "api-call-service",
+        "z": "bb0cd5391e274e62",
+        "name": "向HA发送需新增IP通知",
+        "server": "",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "persistent_notification",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\t   \"message\":msg.payload,\t   \"title\":\"企业微信可信IP需新增\"\t}",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 730,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b43fc6dca0152c33",
+        "type": "inject",
+        "z": "bb0cd5391e274e62",
+        "name": "",
+        "props": [
+            {
+                "p": "timestamp",
+                "v": "",
+                "vt": "date"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 08 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 110,
+        "y": 60,
+        "wires": [
+            [
+                "0d01aab878526275"
+            ]
+        ]
+    },
+    {
+        "id": "0d01aab878526275",
+        "type": "http request",
+        "z": "bb0cd5391e274e62",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://qifu-api.baidubce.com/ip/local/geo/v1/district?",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 260,
+        "y": 60,
+        "wires": [
+            [
+                "1cc6b8477efd6018"
+            ]
+        ]
+    },
+    {
+        "id": "1cc6b8477efd6018",
+        "type": "json",
+        "z": "bb0cd5391e274e62",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 390,
+        "y": 60,
+        "wires": [
+            [
+                "119ae4721acf1134"
+            ]
+        ]
+    },
+    {
+        "id": "119ae4721acf1134",
+        "type": "function",
+        "z": "bb0cd5391e274e62",
+        "name": "判断当前ip是否变化出授权范围",
+        "func": "var exist_ips = global.get(\"exist_ips\");\nvar now_ip = msg.payload.ip;\nmsg.now_ip = now_ip;\nmsg.ip_change = false;\nif(!exist_ips.includes(now_ip)){\n    //当前ip不在可信ip列表内，需弹信息说往微信可信ip添加当前ip\n    msg.ip_change = true;\n    exist_ips.push(now_ip);\n    global.set(\"exist_ips\", exist_ips);\n    var message = \"新增IP:\\n\" + now_ip + \"\\n所有IP:\\n\" + exist_ips.join(\";\");\n    msg.payload = message;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// 部署节点后，此处添加的代码将运行一次。 \nvar exist_ips = \"和自建应用企业可信IP处填的一样\".split(\";\");\nglobal.set(\"exist_ips\", exist_ips);",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 60,
+        "wires": [
+            [
+                "7fa058075bad176e",
+                "cb6947cea49e2226"
+            ]
+        ]
+    },
+    {
+        "id": "ec625ea81825070b",
+        "type": "api-call-service",
+        "z": "bb0cd5391e274e62",
+        "name": "早报测试",
+        "server": "",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "text",
+        "service": "set_value",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"value\":msg.payload}",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 320,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cb6947cea49e2226",
+        "type": "function",
+        "z": "bb0cd5391e274e62",
+        "name": "合并消息",
+        "func": "msg.payload = \"早上好！这是一条定时触发测试消息，现在的时间戳为：\" + msg.timestamp;\nmsg.payload += \"\\n当前出口ip：\" + msg.now_ip;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "ec625ea81825070b"
+            ]
+        ]
+    },
+    {
+        "id": "7fa058075bad176e",
+        "type": "switch",
+        "z": "bb0cd5391e274e62",
+        "name": "",
+        "property": "ip_change",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 550,
+        "y": 140,
+        "wires": [
+            [
+                "3b961cef59ac21e8"
+            ]
+        ]
+    },
+    {
+        "id": "1fb3817d226125ce",
+        "type": "inject",
+        "z": "bb0cd5391e274e62",
+        "name": "测试HA推送能力",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "测试信息",
+        "payloadType": "str",
+        "x": 520,
+        "y": 180,
+        "wires": [
+            [
+                "3b961cef59ac21e8"
+            ]
+        ]
+    },
+    {
+        "id": "8e52fee7de914da4",
+        "type": "ha-entity-config",
+        "server": "",
+        "deviceConfig": "",
+        "name": "微信文本消息",
+        "version": "6",
+        "entityType": "text",
+        "haConfig": [
+            {
+                "property": "name",
+                "value": "wxText"
+            },
+            {
+                "property": "icon",
+                "value": ""
+            },
+            {
+                "property": "entity_picture",
+                "value": ""
+            },
+            {
+                "property": "entity_category",
+                "value": ""
+            },
+            {
+                "property": "mode",
+                "value": "text"
+            },
+            {
+                "property": "min_length",
+                "value": ""
+            },
+            {
+                "property": "max_length",
+                "value": ""
+            },
+            {
+                "property": "pattern",
+                "value": ""
+            }
+        ],
+        "resend": false,
+        "debugEnabled": false
+    }
+]
