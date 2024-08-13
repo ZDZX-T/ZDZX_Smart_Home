@@ -45,7 +45,23 @@
         `(venv) deactivate`  
     * ctrl+c结束本步骤中启动的test.py  
     * 关闭云服务器开放的8080端口  
+5. 在企业可信IP界面添加Home Assistant公网出口IP（如果不知道可以先不填，后续步骤可以获取该信息）
   
-## Node-RED微信推送能力流设置  
-**_前面的区域以后再来探索吧_**  
-TODO修改flows.json敏感信息
+## Node-RED微信推送能力流设置
+1. 导入流[flows_new.json](flows_new.json)，导入后界面如下图
+    ![导入后初始状态](img/导入后初始状态.png)
+2. 修复Server错误
+    * 双击“早报测试”，修改Server为您的Home Assistant
+    * 双击“向HA发送需新增IP通知”，修改Server为您的Home Assistant
+    * 双击“微信文字消息”，编辑实体配置，修改Server为您的Home Assistant
+    * **进行部署**
+3. 修复实体缺失
+    * 双击“早报测试”，修改实体为“微信文字消息”对应的实体（没有自定义的话我设置的名称为wxText）
+4. 填充企业微信信息
+    * 双击“判断当前ip是否变化出授权范围”，点击“初始化函数”，将“和自建应用企业可信IP处填的一样”替换为企业可信IP处填写的内容，双引号不要删
+    * 双击“获取access_token”，将URL地址中的“公司ID”、“自建程序secret”替换为实际值
+    * 双击“生成请求”，根据注释将“toparty”与“agentid”字段修改为实际值
+    * **进行部署**
+5. 测试  
+    点击“注入”，如果可信IP信息过时，那么Home Assistant界面会有一条需要更新IP的通知，需要将通知里的“所有IP”内容复制到**企业可信IP 与 “判断当前ip是否变化出授权范围”的初始化函数的原IP信息处**。  
+    如果Home Assistant未弹IP过时，那么微信应该可以收到消息了，没收到的话可以打开“http返回”进行debug。

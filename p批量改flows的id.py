@@ -41,6 +41,10 @@ if __name__ == '__main__':
         if target in i:
             i[target] = string_hex_plus_1(i[target])
 
+        target = 'entityConfig'
+        if target in i:
+            i[target] = string_hex_plus_1(i[target])
+
         target = 'wires'
         if target in i:
             for j in range(len(i[target])):

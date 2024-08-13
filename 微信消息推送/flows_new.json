@@ -295,7 +295,7 @@
         "debugenabled": false,
         "inputs": 0,
         "outputs": 1,
-        "entityConfig": "8e52fee7de914da2",
+        "entityConfig": "8e52fee7de914da4",
         "mode": "listen",
         "value": "payload",
         "valueType": "msg",

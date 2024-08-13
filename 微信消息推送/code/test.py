@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def handle_get_request():
-    return 'po'
+    return 'Hello World!'
 
 
 if __name__ == '__main__':
