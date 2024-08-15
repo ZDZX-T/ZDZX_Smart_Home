@@ -6,6 +6,13 @@
   * [企业微信接收消息服务器设置](#企业微信接收消息服务器设置)
   * [Node-RED微信推送能力流设置](#Node-RED微信推送能力流设置)
   
+## 创建应用  
+1. 进入企业微信后，进入“应用管理”界面，点击自建部分的“创建应用”  
+    ![创建应用](img/创建应用.png)
+2. 根据创建应用界面的要求填写相关信息，可见范围部分一定要有**部门**
+3. 进入“我的企业”界面，点击“微信插件”，微信扫码“邀请关注”处的二维码以接受消息推送  
+    ![扫码关注](img/扫码关注.png)
+  
 ## 企业微信接收消息服务器设置
 1. 将[code](code)文件夹上传至有公网ip的服务器，**_并进入code文件夹内_**  
     文件夹中的[WXWXBizMsgCrypt3.py](code/WXBizMsgCrypt3.py)与[ierror.py](code/ierror.py)均来自于github项目[weworkapi_python](https://github.com/sbzhu/weworkapi_python/tree/master/callback)
