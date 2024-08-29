@@ -1,4 +1,5 @@
-# wxMsg
+# 微信消息推送
+b站视频教程[使用Node-RED实现微信推送](https://www.bilibili.com/video/BV1qrHMeYEr6/?share_source=copy_web&vd_source=d17175c986cec83b4c79184b625c9ea2)  
 **注意：需要一下公网ip（用来通过企业微信可信IP认证，只使用一下）**  
 **本项目代码部署部分以部署在云服务器上进行演示**
   
