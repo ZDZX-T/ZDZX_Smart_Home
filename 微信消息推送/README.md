@@ -25,7 +25,7 @@
     * 进入虚拟环境  
         `source venv/bin/activate`
     * 安装所需的包，有gunicorn、flask、pycryptodome  
-        `(venv) pip3 install -r requirements.py`  
+        `(venv) pip3 install -r requirements.txt`  
 3. 测试服务是否正常可用（可跳过）  
     * 运行test.py  
         `python3 test.py`
