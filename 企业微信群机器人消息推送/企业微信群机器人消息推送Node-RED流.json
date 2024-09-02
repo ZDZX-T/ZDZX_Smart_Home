@@ -1,0 +1,233 @@
+[
+    {
+        "id": "534c6becde1b9af2",
+        "type": "tab",
+        "label": "企业微信群推送",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a0117e37fcb4397d",
+        "type": "inject",
+        "z": "534c6becde1b9af2",
+        "name": "早报测试",
+        "props": [
+            {
+                "p": "timestamp",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 08 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 190,
+        "y": 240,
+        "wires": [
+            [
+                "c2824b7cafa01642"
+            ]
+        ]
+    },
+    {
+        "id": "a480a3ad4ef133c6",
+        "type": "function",
+        "z": "534c6becde1b9af2",
+        "name": "生成请求内容",
+        "func": "msg.url = \"\";//替换为自己的webhook\nmsg.payload = {\n    \"msgtype\": \"text\",\n    \"text\": {\n        \"content\": msg.payload\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 80,
+        "wires": [
+            [
+                "fb6c119d8d463fbe"
+            ]
+        ]
+    },
+    {
+        "id": "fb6c119d8d463fbe",
+        "type": "http request",
+        "z": "534c6becde1b9af2",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 380,
+        "y": 80,
+        "wires": [
+            [
+                "98b554cf9f85b951"
+            ]
+        ]
+    },
+    {
+        "id": "98b554cf9f85b951",
+        "type": "debug",
+        "z": "534c6becde1b9af2",
+        "name": "http返回",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "fd8a4ac6ecbe34ee",
+        "type": "link in",
+        "z": "534c6becde1b9af2",
+        "name": "link in 4",
+        "links": [
+            "5321fd8c93ae96ec",
+            "3f40e5bb12c3551a"
+        ],
+        "x": 105,
+        "y": 80,
+        "wires": [
+            [
+                "a480a3ad4ef133c6"
+            ]
+        ]
+    },
+    {
+        "id": "c2824b7cafa01642",
+        "type": "function",
+        "z": "534c6becde1b9af2",
+        "name": "生成早报内容",
+        "func": "msg.payload = \"早上好！这是一条定时触发测试消息，现在的时间戳为：\" + msg.timestamp;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 240,
+        "wires": [
+            [
+                "5321fd8c93ae96ec"
+            ]
+        ]
+    },
+    {
+        "id": "838c1178ba371123",
+        "type": "ha-text",
+        "z": "534c6becde1b9af2",
+        "name": "微信消息接口",
+        "version": 1,
+        "debugenabled": false,
+        "inputs": 0,
+        "outputs": 1,
+        "entityConfig": "8e52fee7de914da3",
+        "mode": "listen",
+        "value": "payload",
+        "valueType": "msg",
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "value"
+            }
+        ],
+        "x": 190,
+        "y": 320,
+        "wires": [
+            [
+                "3f40e5bb12c3551a"
+            ]
+        ]
+    },
+    {
+        "id": "5321fd8c93ae96ec",
+        "type": "link out",
+        "z": "534c6becde1b9af2",
+        "name": "link out 5",
+        "mode": "link",
+        "links": [
+            "fd8a4ac6ecbe34ee"
+        ],
+        "x": 475,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "3f40e5bb12c3551a",
+        "type": "link out",
+        "z": "534c6becde1b9af2",
+        "name": "link out 6",
+        "mode": "link",
+        "links": [
+            "fd8a4ac6ecbe34ee"
+        ],
+        "x": 295,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "8e52fee7de914da3",
+        "type": "ha-entity-config",
+        "server": "",
+        "deviceConfig": "",
+        "name": "微信文本消息",
+        "version": "6",
+        "entityType": "text",
+        "haConfig": [
+            {
+                "property": "name",
+                "value": "wxText"
+            },
+            {
+                "property": "icon",
+                "value": ""
+            },
+            {
+                "property": "entity_picture",
+                "value": ""
+            },
+            {
+                "property": "entity_category",
+                "value": ""
+            },
+            {
+                "property": "mode",
+                "value": "text"
+            },
+            {
+                "property": "min_length",
+                "value": ""
+            },
+            {
+                "property": "max_length",
+                "value": 500
+            },
+            {
+                "property": "pattern",
+                "value": ""
+            }
+        ],
+        "resend": false,
+        "debugEnabled": false
+    }
+]
