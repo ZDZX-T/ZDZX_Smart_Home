@@ -1,5 +1,6 @@
 # 企业微信群机器人消息推送（推荐）  
 **完全不需要公网IP！！**  
+b站链接[https://www.bilibili.com/video/BV1REHxeGEug/](https://www.bilibili.com/video/BV1REHxeGEug/)
 
 ## 目录
   * [创建群聊及机器人](#创建群聊及机器人-)
