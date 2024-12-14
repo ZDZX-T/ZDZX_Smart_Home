@@ -1,6 +1,6 @@
 # 小爱本地化
 
-b站视频链接（稍后添加）
+b站视频链接[https://www.bilibili.com/video/BV11hB7YFE9o/?vd_source=39491253fa18502cd3cec1aac25976b5](https://www.bilibili.com/video/BV11hB7YFE9o/?vd_source=39491253fa18502cd3cec1aac25976b5)
 
 ## 文件夹包含内容介绍
 
