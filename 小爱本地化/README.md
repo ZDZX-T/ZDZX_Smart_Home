@@ -1,13 +1,13 @@
 # 小爱本地化
 
-b站视频链接
+b站视频链接（稍后添加）
 
 ## 文件夹包含内容介绍
 
-| 文件           | 介绍        |
-| -------------- | ----------- |
-| mi2local.yaml  | esp配置文件 |
-| flows_new.json | Node-RED流  |
+| 文件                                 | 介绍        |
+|------------------------------------|-----------|
+| [mi2local.yaml](./mi2local.yaml)   | esp配置文件   |
+| [flows_new.json](./flows_new.json) | Node-RED流 |
 
 ## 使用方法
 
