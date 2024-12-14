@@ -1,0 +1,78 @@
+# 测试能否通过wifi.enable与wifi.disable控制AP的开闭
+# 答曰能控制，但关闭后再打开，ap的ssid就会变成ESP_XXXXXX，不再是设定的ssid
+
+
+wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32 Fallback Hotspot"
+    password: "12345678"
+    ap_timeout: 1s
+
+# captive_portal:
+
+
+web_server:
+  port: 80
+  ota: False
+  #auth: 
+  # username: "admin"
+  # password: "admin" 
+  js_include: "./v3/www.js"
+  js_url: ""
+  version: 3
+
+
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: LED
+
+binary_sensor:
+  - platform: esp32_touch
+    name: "Touch"
+    id: Touch
+    pin: GPIO15
+    threshold: 925
+    on_multi_click:
+      - timing:  # 双击
+          - ON for at most 1s
+          - OFF for at most 0.3s
+          - ON for at most 1s
+          - OFF for at least 0.2s
+        invalid_cooldown: 0.3s
+        then:
+          - logger.log: "Double Clicked"
+      - timing:
+          - ON for at least 1s
+        invalid_cooldown: 0.3s
+        then:
+          - logger.log: "Long Click"
+          - if:
+              condition: wifi.enabled
+              then: 
+                - wifi.disable: 
+              else: 
+                - wifi.enable:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.3s
+        invalid_cooldown: 0.3s
+        then:
+          - logger.log: "Single Short Clicked"
+        
+
+esp32_touch:
+  # setup_mode: true  # 需要调试esp32_touch则需要取消该行注释
+
+    
+interval:
+  - interval: 1s
+    then: 
+      - if:
+          condition:
+            - wifi.enabled: 
+          then:
+            - output.turn_on: LED
+          else: 
+            - output.turn_off: LED

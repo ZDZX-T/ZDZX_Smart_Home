@@ -1,0 +1,368 @@
+web_server:
+  port: 80
+  ota: False
+  #auth: 
+  # username: "admin"
+  # password: "admin" 
+  js_include: "./v3/www.js"
+  js_url: ""
+  version: 3
+  include_internal: True
+
+
+binary_sensor:
+  - platform: esp32_touch
+    name: "Touch"
+    id: Touch
+    pin: GPIO15
+    threshold: 925
+    on_press: 
+      then:
+         - number.increment: pageNum
+         - component.update: my_display
+
+esp32_touch:
+  # setup_mode: true  # 需要调试esp32_touch则需要取消该行注释
+
+number:
+  - platform: template
+    min_value: 1
+    max_value: 4
+    step: 1
+    optimistic: True
+    id: pageNum
+  - platform: template
+    min_value: 0
+    max_value: 3
+    step: 1
+    optimistic: True
+    id: _style
+
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+switch:
+  - platform: template
+    id: _humidity 
+    optimistic: True
+  - platform: template
+    id: _light
+    optimistic: True
+  - platform: template
+    id: _fan_auto
+    optimistic: True
+  - platform: template
+    id: _fan_open
+    optimistic: True
+  - platform: template
+    id: _sensor_fail
+    optimistic: True
+  - platform: template
+    id: _inner_high
+    optimistic: True
+  - platform: template
+    id: _inner_low
+    optimistic: True
+  - platform: template
+    id: _outer_low
+    optimistic: True
+  - platform: template
+    id: _pump_auto
+    optimistic: True
+  - platform: template
+    id: _pump_open
+    optimistic: True
+  - platform: template
+    id: _wifi_enable
+    optimistic: True
+  - platform: template
+    id: _wifi_connected
+    optimistic: True
+
+
+font:
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI12
+    size: 12  # 16px
+    glyphs: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 0, '.',
+      '%', '内部', '光照', 'V', '+', '-',
+      '自动', '手动', '送风', '待机', '正常', '故障', '送水',
+      '有水', '无水',
+      '网络未开启，长按开启', '网络已开启，长按关闭',
+      'WiFi未连接,连ESP热点', 'WiFi已连接,连同一WiFi',
+      '后访问'
+    ]
+    # 128*64屏幕，一行最多容纳汉字约10.5个
+    # 单字向16*16方格居中，参数为x+2 y+1
+    # 双字向32*16方格居中，参数为x+4 y+1
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI15
+    size: 15  # 20px
+    glyphs: [
+      '首页', '水位', '网络', '修复',
+      '水位传感器'
+    ]
+    # 128*64屏幕，一行最多容纳汉字约8.5个
+    # 单字向16*16方格居中，参数为x+0.5 y+1
+    # 双字向32*16方格居中，参数为x+1 y+1
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI18
+    size: 18
+    glyphs: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 0, '.',
+      '无需处理', '长按重置'
+    ]
+    # 128*64屏幕，一行最多容纳汉字7个
+    # 单字向16*16方格居中，参数为x-1 y-1
+    # 双字向32*16方格居中，参数为x-2 y-1
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI20
+    size: 20
+    glyphs: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 0, '.',
+      '%', '℃'
+    ]
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI24
+    size: 24
+    glyphs: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 0, '.',
+      '%'
+    ]
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    id: my_display
+    update_interval: 2s
+    lambda: |-
+      it.line(0, 15, 127, 15);
+      if (id(pageNum).state == 1){
+        it.filled_rectangle(0, 0, 32, 16);
+        it.printf(0+1, 0+1, id(SIMHEI15), COLOR_OFF, "首页");
+        it.printf(32+1, 0+1, id(SIMHEI15), "水位");
+        it.printf(64+1, 0+1, id(SIMHEI15), "网络");
+        it.printf(96+1, 0+1, id(SIMHEI15), "修复");
+
+        //主湿度温度
+        it.printf(41, 17, id(SIMHEI24), TextAlign::TOP_RIGHT, "%.0f%%", 66.0);
+        it.printf(64, 43, id(SIMHEI20), TextAlign::TOP_RIGHT, "%.1f℃", 18.5);
+        //内部湿度
+        it.printf(99, 16, id(SIMHEI12), TextAlign::TOP_RIGHT, "内部");
+        it.printf(99, 28, id(SIMHEI12), TextAlign::TOP_RIGHT, "%.0f%%", 88.0);
+        //分隔线
+        it.line(66, 16, 66, 63);
+        it.line(101, 16, 101, 63);
+        //自动湿度与自动光照
+        if(id(_style).state == 0 || id(_style).state >= 2){  //无风格,同时风格2、3不涉及底色变化,不再单独打印读数,在此统一打印
+          //湿度
+          it.printf(64, 18, id(SIMHEI12), TextAlign::TOP_RIGHT, "%.0f%%", 50.0);
+          it.printf(64, 28, id(SIMHEI12), TextAlign::TOP_RIGHT, "%.0f%%", 45.0);
+          //光照
+          it.printf(99, 41, id(SIMHEI12), TextAlign::TOP_RIGHT, "光照");
+          it.printf(99, 53, id(SIMHEI12), TextAlign::TOP_RIGHT, "+%.2f", 0.34);
+        }
+        if(id(_style).state == 1){  //底色变化    因为上面判断了_style是否大于等于2,因此这里用if
+          //湿度
+          if (id(_humidity).state){
+            it.filled_rectangle(43, 18, 21, 21);
+            it.printf(64, 18, id(SIMHEI12), COLOR_OFF, TextAlign::TOP_RIGHT, "%.0f%%", 50.0);
+            it.printf(64, 28, id(SIMHEI12), COLOR_OFF, TextAlign::TOP_RIGHT, "%.0f%%", 45.0);
+          }
+          else{
+            it.rectangle(43, 18, 21, 21);
+            it.printf(64, 18, id(SIMHEI12), TextAlign::TOP_RIGHT, "%.0f%%", 50.0);
+            it.printf(64, 28, id(SIMHEI12), TextAlign::TOP_RIGHT, "%.0f%%", 45.0);
+          }
+          //光照
+          if (id(_light).state){
+            it.filled_rectangle(68, 40, 32, 24);
+            it.printf(99, 41, id(SIMHEI12), COLOR_OFF, TextAlign::TOP_RIGHT, "光照");
+            it.printf(99, 53, id(SIMHEI12), COLOR_OFF, TextAlign::TOP_RIGHT, "+%.2f", 0.34);
+          }
+          else{
+            it.rectangle(68, 40, 32, 24);
+            it.printf(99, 41, id(SIMHEI12), TextAlign::TOP_RIGHT, "光照");
+            it.printf(99, 53, id(SIMHEI12), TextAlign::TOP_RIGHT, "+%.2f", 0.34);
+          }
+        }
+        else if(id(_style).state == 2){  //类复选框
+          //湿度
+          if (id(_humidity).state){
+            it.filled_rectangle(42, 19, 3, 20);
+          }
+          else{
+            it.rectangle(42, 19, 3, 20);
+          }
+          //光照
+          if (id(_light).state){
+            it.filled_rectangle(70, 43, 3, 10);
+          }
+          else{
+            it.rectangle(70, 43, 3, 10);
+          }
+        }
+        else if(id(_style).state == 3){  //删除线
+          //湿度
+          if (id(_humidity).state){}
+          else{
+            it.line(43, 23, 63, 23);
+            it.line(43, 33, 63, 33);
+          }
+          //光照
+          if (id(_light).state){}
+          else{
+            it.line(69, 47, 100, 47);
+            it.line(69, 57, 100, 57);
+          }
+        }
+
+        //风扇自动挡
+        if (id(_fan_auto).state){
+          it.filled_rectangle(103, 18, 25, 14);
+          it.printf(103, 18, id(SIMHEI12), COLOR_OFF, "自动");
+        }
+        else{
+          it.rectangle(103, 18, 25, 14);
+          it.printf(103, 18, id(SIMHEI12), "手动");
+        }
+        //风扇状态
+        if (id(_fan_open).state){
+          it.filled_rectangle(103, 34, 25, 14);
+          it.printf(103, 34, id(SIMHEI12), COLOR_OFF, "送风");
+        }
+        else{
+          it.rectangle(103, 34, 25, 14);
+          it.printf(103, 34, id(SIMHEI12), "待机");
+        }
+        //故障状态
+        if (id(_sensor_fail).state){
+          it.filled_rectangle(103, 50, 25, 14);
+          it.printf(103, 50, id(SIMHEI12), COLOR_OFF, "故障");
+        }
+        else{
+          it.rectangle(103, 50, 25, 14);
+          it.printf(103, 50, id(SIMHEI12), "正常");
+        }
+      }
+      else if (id(pageNum).state == 2){
+        it.filled_rectangle(32, 0, 32, 16);
+        it.printf(0+1, 0+1, id(SIMHEI15), "首页");
+        it.printf(32+1, 0+1, id(SIMHEI15), COLOR_OFF, "水位");
+        it.printf(64+1, 0+1, id(SIMHEI15), "网络");
+        it.printf(96+1, 0+1, id(SIMHEI15), "修复");
+
+        //主体壶
+        it.line(10, 27, 10, 63);
+        it.line(11, 63, 37, 63);
+        it.line(38, 27, 38, 63);
+        //外置壶
+        it.rectangle(55, 27, 36, 37);
+        it.draw_pixel_at(59, 27, COLOR_OFF);
+        //水管
+        it.line(33, 22, 33, 28);
+        it.line(35, 24, 35, 28);
+        it.line(34, 22, 59, 22);
+        it.line(36, 24, 58, 24);
+        it.line(60, 22, 60, 61);
+        it.line(58, 24, 58, 61);
+
+        //水位提示
+        if(id(_inner_high).state){
+          it.filled_rectangle(12, 32, 25, 14);
+          it.printf(12, 32, id(SIMHEI12), COLOR_OFF, "有水");
+        }else{
+          it.rectangle(12, 32, 25, 14);
+          it.printf(12, 32, id(SIMHEI12), "无水");
+        }
+        if(id(_inner_low).state){
+          it.filled_rectangle(12, 48, 25, 14);
+          it.printf(12, 48, id(SIMHEI12), COLOR_OFF, "有水");
+        }else{
+          it.rectangle(12, 48, 25, 14);
+          it.printf(12, 48, id(SIMHEI12), "无水");
+        }
+        if(id(_outer_low).state){
+          it.filled_rectangle(63, 48, 25, 14);
+          it.printf(63, 48, id(SIMHEI12), COLOR_OFF, "有水");
+        }else{
+          it.rectangle(63, 48, 25, 14);
+          it.printf(63, 48, id(SIMHEI12), "无水");
+        }
+
+        //分隔线
+        it.line(101, 16, 101, 63);
+        //水泵自动挡
+        if (id(_pump_auto).state){
+          it.filled_rectangle(103, 18, 25, 14);
+          it.printf(103, 18, id(SIMHEI12), COLOR_OFF, "自动");
+        }
+        else{
+          it.rectangle(103, 18, 25, 14);
+          it.printf(103, 18, id(SIMHEI12), "手动");
+        }
+        //水泵状态
+        if (id(_pump_open).state){
+          it.filled_rectangle(103, 34, 25, 14);
+          it.printf(103, 34, id(SIMHEI12), COLOR_OFF, "送水");
+          it.line(34, 24, 34, 29);
+          it.line(34, 23, 59, 23);
+          it.line(59, 24, 59, 60);
+        }
+        else{
+          it.rectangle(103, 34, 25, 14);
+          it.printf(103, 34, id(SIMHEI12), "待机");
+        }
+        //故障状态
+        if (id(_sensor_fail).state){
+          it.filled_rectangle(103, 50, 25, 14);
+          it.printf(103, 50, id(SIMHEI12), COLOR_OFF, "故障");
+        }
+        else{
+          it.rectangle(103, 50, 25, 14);
+          it.printf(103, 50, id(SIMHEI12), "正常");
+        }
+      }
+      else if (id(pageNum).state == 3){
+        it.filled_rectangle(64, 0, 32, 16);
+        it.printf(0+1, 0+1, id(SIMHEI15), "首页");
+        it.printf(32+1, 0+1, id(SIMHEI15), "水位");
+        it.printf(64+1, 0+1, id(SIMHEI15), COLOR_OFF, "网络");
+        it.printf(96+1, 0+1, id(SIMHEI15), "修复");
+
+        if(id(_wifi_enable).state){
+          it.filled_rectangle(2, 18, 124, 15);
+          it.printf(4, 19, id(SIMHEI12), COLOR_OFF, "网络已开启，长按关闭");
+          if(id(_wifi_connected).state){
+            it.printf(0, 36, id(SIMHEI12), "WiFi已连接,连同一WiFi");
+          }else{
+            it.printf(2, 36, id(SIMHEI12), "WiFi未连接,连ESP热点");
+          }
+          it.printf(0, 49, id(SIMHEI12), "后访问192.168.4.1");
+        }else{
+          it.rectangle(2, 18, 124, 15);
+          it.printf(4, 19, id(SIMHEI12), "网络未开启，长按开启");
+        }
+      }
+      else if (id(pageNum).state == 4){
+        it.filled_rectangle(96, 0, 32, 16);
+        it.printf(0+1, 0+1, id(SIMHEI15), "首页");
+        it.printf(32+1, 0+1, id(SIMHEI15), "水位");
+        it.printf(64+1, 0+1, id(SIMHEI15), "网络");
+        it.printf(96+1, 0+1, id(SIMHEI15), COLOR_OFF, "修复");
+
+        it.printf(12, 23, id(SIMHEI15), "水位传感器");
+        if(id(_sensor_fail).state){
+          it.filled_rectangle(89, 22, 25, 14);
+          it.printf(89, 22, id(SIMHEI12), COLOR_OFF, "故障");
+          it.printf(27, 41, id(SIMHEI18), "长按重置");
+        }else{
+          it.rectangle(89, 22, 25, 14);
+          it.printf(89, 22, id(SIMHEI12), "正常");
+          it.printf(27, 41, id(SIMHEI18), "无需处理");
+        }
+      }

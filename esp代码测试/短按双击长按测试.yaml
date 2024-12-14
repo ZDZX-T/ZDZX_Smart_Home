@@ -1,0 +1,63 @@
+# 测试同一按键集合单击、双击、长按时的参数设置
+# 下方on_multi_click参数设置表现良好，主要在于双击的第一个off时间要比单击的off时间短，即区间不重合
+# 未尝试将invalid_cooldown设为更低，后续有必要时尝试降低
+
+
+web_server:
+  port: 80
+  ota: False
+  #auth: 
+  # username: "admin"
+  # password: "admin" 
+  js_include: "./v3/www.js"
+  js_url: ""
+  version: 3
+
+
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: LED
+
+binary_sensor:
+  - platform: esp32_touch
+    name: "Touch"
+    id: Touch
+    pin: GPIO15
+    threshold: 925
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 0.3s
+          - ON for at most 1s
+          - OFF for at least 0.2s
+        invalid_cooldown: 0.3s
+        then:
+          - logger.log: "Double Clicked"
+      - timing:
+          - ON for at least 1s
+        invalid_cooldown: 0.3s
+        then:
+          - logger.log: "Long Click"
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.3s
+        invalid_cooldown: 0.3s
+        then:
+          - logger.log: "Single Short Clicked"
+        
+
+esp32_touch:
+  # setup_mode: true  # 需要调试esp32_touch则需要取消该行注释
+
+    
+interval:
+  - interval: 1s
+    then: 
+      - if:
+          condition:
+            - wifi.enabled: 
+          then:
+            - output.turn_on: LED
+          else: 
+            - output.turn_off: LED

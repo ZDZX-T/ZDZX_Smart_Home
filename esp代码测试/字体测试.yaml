@@ -1,0 +1,114 @@
+binary_sensor:
+  - platform: esp32_touch
+    name: "Touch"
+    id: Touch
+    pin: GPIO15
+    threshold: 925
+    on_click: 
+      then:
+         - display.page.show_next: my_display
+         - component.update: my_display
+             
+
+esp32_touch:
+  # setup_mode: true  # 需要调试esp32_touch则需要取消该行注释
+
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+font:
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI
+    size: 12  # 16px
+    glyphs: [
+      '测试', '这是页',
+      'This is page ', 'IP: ', 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, '.',
+      '十二长度容纳极限', '双字', '定位', '纵向', '田', '居中'
+    ]
+    # 128*64屏幕，一行最多容纳汉字约10.5个
+    # 单字向16*16方格居中，参数为x+2 y+1
+    # 双字向32*16方格居中，参数为x+4 y+1
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI15
+    size: 15  # 20px
+    glyphs: [
+      '测试', '这是页',
+      'This is page ', 'IP: ', 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, '.',
+      '十五长度容纳极限', '双字', '定位', '纵向', '田', '居中'
+    ]
+    # 128*64屏幕，一行最多容纳汉字约8.5个
+    # 单字向16*16方格居中，参数为x+0.5 y+1
+    # 双字向32*16方格居中，参数为x+1 y+1
+  - file: "fonts/SIMHEI.TTF"
+    id: SIMHEI18
+    size: 18  # 20px
+    glyphs: [
+      '测试', '这是页',
+      'This is page ', 'IP: ', 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, '.',
+      '十八长度容纳极限', '双字', '定位', '纵向', '田', '居中'
+    ]
+    # 128*64屏幕，一行最多容纳汉字7个
+    # 单字向16*16方格居中，参数为x-1 y-1
+    # 双字向32*16方格居中，参数为x-2 y-1
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    id: my_display
+    update_interval: 1min
+    pages:   # ctrl+/批量注释
+      - id: page1
+        lambda: |-
+          it.printf(0, 0, id(SIMHEI18), "十八长度容纳极限测试田田田");
+          int i,j;
+          for(i=0;i<3;i++){
+            for(j=0;j<8;j++){
+              it.rectangle(16*j, 16+16*i, 1, 1);
+              it.printf(16*j+j-1, 16+16*i+i-1, id(SIMHEI18), "田");
+            }
+          }
+      - id: page2
+        lambda: |-
+          it.printf(0, 0, id(SIMHEI), "双字居中测试");
+          int i,j;
+          for(i=0;i<4;i++){
+            it.rectangle(32*i, 16, 1, 1);
+            it.printf(32*i+i-2, 16, id(SIMHEI18), "田田");
+            it.rectangle(32*i, 32, 32, 16);
+            it.printf(32*i+i+4-2, 32, id(SIMHEI18), "田田");
+          }
+      # - id: page1
+      #   lambda: |-
+      #     it.printf(0, 0, id(SIMHEI), "十二长度容纳极限测试田田田");  //10.5个字
+      #     int i,j;
+      #     for(i=0;i<3;i++){
+      #       for(j=0;j<8;j++){
+      #         it.rectangle(16*j, 16+16*i, 16, 16);
+      #         it.printf(16*j+j, 16+16*i+i, id(SIMHEI), "田");  //x+2 y+1
+      #       }
+      #     }
+      # - id: page2
+      #   lambda: |-
+      #     it.printf(0, 0, id(SIMHEI15), "十五长度容纳极限测试田田田");  //8.5个字
+      #     int i,j;
+      #     for(i=0;i<3;i++){
+      #       for(j=0;j<8;j++){
+      #         it.rectangle(16*j, 16+16*i, 16, 16);
+      #         it.printf(16*j+j, 16+16*i+i, id(SIMHEI15), "田");  //x+0 y+1
+      #       }
+      #     }
+      # - id: page3
+      #   lambda: |-
+      #     it.printf(0, 0, id(SIMHEI), "双字居中测试");
+      #     int i,j;
+      #     for(i=0;i<4;i++){
+      #       it.rectangle(32*i, 16, 32, 16);
+      #       it.printf(32*i+i, 16, id(SIMHEI), "田田");
+      #       it.rectangle(32*i, 32, 32, 16);
+      #       it.printf(32*i+i+4, 32, id(SIMHEI), "田田");
+      #       it.rectangle(32*i, 48, 32, 16);
+      #       it.printf(32*i+i, 48, id(SIMHEI15), "田田");  //
+      #     }

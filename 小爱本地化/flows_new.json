@@ -1,0 +1,258 @@
+[
+    {
+        "id": "92e013d3c95f8c5f",
+        "type": "trigger-state",
+        "z": "b356d35d9fa01d54",
+        "name": "小爱本地化",
+        "server": "",
+        "version": 5,
+        "inputs": 0,
+        "outputs": 2,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "debugEnabled": false,
+        "constraints": [
+            {
+                "targetType": "this_entity",
+                "targetValue": "",
+                "propertyType": "current_state",
+                "propertyValue": "new_state.state",
+                "comparatorType": "is_not",
+                "comparatorValueDatatype": "str",
+                "comparatorValue": "1"
+            }
+        ],
+        "customOutputs": [],
+        "outputInitially": false,
+        "stateType": "str",
+        "enableInput": false,
+        "x": 100,
+        "y": 120,
+        "wires": [
+            [
+                "e75cc3dbad27f03b",
+                "e8680b8732478adf"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "b1896242905ddd56",
+        "type": "switch",
+        "z": "b356d35d9fa01d54",
+        "name": "模式",
+        "property": "hvac_mode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "off",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "cool",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "heat",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "heat_cool",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 410,
+        "y": 120,
+        "wires": [
+            [
+                "e8aa89c8c4bdf29b"
+            ],
+            [
+                "578e46ebfcbaef13"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e75cc3dbad27f03b",
+        "type": "function",
+        "z": "b356d35d9fa01d54",
+        "name": "信息筛选",
+        "func": "msg.hvac_mode = msg.payload;\nmsg.fan_mode = msg.data.event.new_state.attributes.fan_mode;\nmsg.temperature = msg.data.event.new_state.attributes.temperature;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 240,
+        "y": 120,
+        "wires": [
+            [
+                "b1896242905ddd56"
+            ]
+        ]
+    },
+    {
+        "id": "578e46ebfcbaef13",
+        "type": "switch",
+        "z": "b356d35d9fa01d54",
+        "name": "风速",
+        "property": "fan_mode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "auto",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "low",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "medium",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "high",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 4,
+        "x": 570,
+        "y": 140,
+        "wires": [
+            [
+                "7be49e18cf58a9c4"
+            ],
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e8680b8732478adf",
+        "type": "debug",
+        "z": "b356d35d9fa01d54",
+        "name": "debug 10",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 240,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "a139354a94e9428d",
+        "type": "api-call-service",
+        "z": "b356d35d9fa01d54",
+        "name": "复原状态",
+        "server": "",
+        "version": 7,
+        "debugenabled": false,
+        "action": "button.press",
+        "floorId": [],
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "labelId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "blockInputOverrides": true,
+        "domain": "button",
+        "service": "press",
+        "x": 580,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e8aa89c8c4bdf29b",
+        "type": "delay",
+        "z": "b356d35d9fa01d54",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "2",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 420,
+        "y": 60,
+        "wires": [
+            [
+                "a139354a94e9428d"
+            ]
+        ]
+    },
+    {
+        "id": "7be49e18cf58a9c4",
+        "type": "switch",
+        "z": "b356d35d9fa01d54",
+        "name": "温度",
+        "property": "temperature",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "18",
+                "vt": "num"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 1,
+        "x": 730,
+        "y": 120,
+        "wires": [
+            [
+                "a252856e29582dee"
+            ]
+        ]
+    },
+    {
+        "id": "10b5a4c34b432015",
+        "type": "comment",
+        "z": "b356d35d9fa01d54",
+        "name": "备忘录",
+        "info": "",
+        "x": 90,
+        "y": 200,
+        "wires": []
+    }
+]

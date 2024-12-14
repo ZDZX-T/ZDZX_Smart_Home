@@ -1,0 +1,95 @@
+esphome:
+  name: mi2local
+  friendly_name: 小爱本地化
+
+esp32:
+  board: airm2m_core_esp32c3
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "BR5qsBX3NnybMeq7qFQ4Uy3flmtx+Lg6jCLx/cWZ7BU="
+
+ota:
+  - platform: esphome
+    password: "f2575c6581c69edc1eb5b16a45b0da7c"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: " Fallback Hotspot"
+    password: "rZ9GUQk8L81n"
+
+captive_portal:
+
+
+output:
+  - platform: gpio
+    id: LEDD4
+    pin:
+      number: GPIO12
+      ignore_pin_validation_error: true
+  - platform: gpio
+    id: LEDD5
+    pin:
+      number: GPIO13
+      ignore_pin_validation_error: true
+
+
+remote_receiver:
+  - pin: 
+      number: GPIO19
+      inverted: True
+      mode:
+        input: True
+        pullup: True
+    id: IR_receiver
+    tolerance: 55%
+    rmt_channel: 2
+    on_lg: 
+      then:
+        - lambda: id(recv_IR).publish_state(true);
+        - output.turn_on: LEDD5
+        - delay: 0.1s
+        - output.turn_off: LEDD5
+        - delay: 0.9s
+        - lambda: id(recv_IR).publish_state(false);
+
+
+remote_transmitter:
+  - pin: GPIO18
+    carrier_duty_percent: 50%
+    rmt_channel: 0
+    id: IR_transmitter
+
+
+climate:
+  - platform: climate_ir_lg
+    name: "trans"
+    receiver_id: IR_receiver
+
+
+binary_sensor:
+  - platform: template
+    name: "接收红外r_IR"
+    id: recv_IR
+
+
+sensor:
+  - platform: dht
+    pin: GPIO4
+    temperature:
+      name: "温度Temperature"
+    humidity:
+      name: "湿度Humidity"
+    model: DHT11
+    update_interval: 60s
+    id: add_on_dht
