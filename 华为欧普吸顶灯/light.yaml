@@ -1,0 +1,155 @@
+esphome:
+  name: tools-room-light
+  friendly_name: 工具间灯
+
+esp32:
+  board: airm2m_core_esp32c3
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "DxJni+yxABtwqjHYWi/if50UHhhfPqVQ7e9n/bo0eXY="
+
+ota:
+  - platform: esphome
+    password: "658cc36a3ff6b0a3a5ce1fe99c7e69ab"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Tools-Room-Light"
+    password: "KOqriYBpCXoU"
+
+captive_portal:
+
+
+preferences:
+  flash_write_interval: 1s
+    
+
+output:  # 仅仅是让俩板载LED别亮
+  - platform: gpio
+    id: LEDD4
+    pin:
+      number: GPIO12
+      ignore_pin_validation_error: true
+  - platform: gpio
+    id: LEDD5
+    pin:
+      number: GPIO13
+      ignore_pin_validation_error: true
+
+
+i2c:
+  sda: GPIO4
+  scl: GPIO5
+  scan: True
+
+
+i2c_device:
+  id: i2c_bus
+  address: 0x09  # 需要改为log中的“Found i2c device at address 0xXX”的值
+
+
+switch:
+  - platform: template
+    name: "灯开关ls"
+    id: light_switch
+    optimistic: True
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_off: 
+      then:
+        - script.execute: turn_off
+    on_turn_on: 
+      then:
+        - script.execute: turn_on
+
+  
+number:
+  - platform: template  # 亮度数值
+    max_value: 100
+    min_value: 1
+    step: 1
+    name: "亮度ln"
+    id: luminance_number
+    optimistic: True
+    restore_value: True
+    initial_value: 100
+    on_value: 
+      then:
+        - if:
+            condition:
+              - switch.is_on: light_switch
+            then:
+              - script.execute: set_luminance
+  - platform: template  # 色温数值
+    max_value: 5700
+    min_value: 2700
+    step: 1
+    name: "色温cn"
+    id: color_number
+    optimistic: True
+    restore_value: True
+    initial_value: 5700
+    mode: SLIDER
+    on_value: 
+      then:
+        - if:
+            condition:
+              - switch.is_on: light_switch
+            then: 
+              - script.execute: set_color_temperature
+
+
+script:
+  - id: turn_off
+    mode: single
+    then:
+      - logger.log: "called turn_off"
+      - lambda: |-
+          uint8_t data[8] = {0x08, 0x00, 0x0F, 0xD0, 0x07, 0x00, 0x00, 0x00};
+          id(i2c_bus).write(data, 8);
+  - id: turn_on
+    mode: single
+    then:
+      - logger.log: "called turn_on"
+      - lambda: |-
+          uint8_t data[8] = {0x08, 0x00, 0x0F, 0xD0, 0x07, 0x01, 0x00, 0x00};
+          id(i2c_bus).write(data, 8);
+      - script.execute: set_luminance
+      - script.wait: set_luminance
+      - script.execute: set_color_temperature
+  - id: set_luminance
+    mode: single
+    then:
+      - logger.log:
+          format: "called set_luminance, value %f"
+          args: ['id(luminance_number).state']
+      - lambda: |-
+          uint32_t light_val = static_cast<uint32_t>(id(luminance_number).state * 100);  //亮度数值
+          uint8_t light_high, light_low;  //亮度高位 亮度低位
+          light_high = light_val/256;
+          light_low = light_val%256;
+          uint8_t data[9] = {0x09, 0x00, 0x11, 0xD0, 0x07, light_low, light_high, 0x00, 0x00};
+          id(i2c_bus).write(data, 9);
+  - id: set_color_temperature
+    mode: single
+    then:
+      - logger.log:
+          format: "called set_color_temperature, value %f"
+          args: ['id(color_number).state']
+      - lambda: |-
+          uint32_t color_val = static_cast<uint32_t>(id(color_number).state);  //色温数值
+          uint8_t color_high, color_low;  //色温高位 色温低位
+          color_high = color_val/256;
+          color_low = color_val%256;
+          uint8_t data[9] = {0x09, 0x00, 0x13, 0xD0, 0x07, color_low, color_high, 0x00, 0x00};
+          id(i2c_bus).write(data, 9);
