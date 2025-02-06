@@ -1,6 +1,8 @@
 # 我的Home Assistant内容分享
 
-b站合集页（请用鼠标中键点击）[https://space.bilibili.com/27866945/channel/collectiondetail?sid=2532703&amp;ctype=0](https://space.bilibili.com/27866945/channel/collectiondetail?sid=2532703&ctype=0)
+b站合集页（请用鼠标中键点击）[https://space.bilibili.com/27866945/channel/collectiondetail?sid=2532703&amp;ctype=0](https://space.bilibili.com/27866945/channel/collectiondetail?sid=2532703&ctype=0)  
+github项目主页[https://github.com/ZDZX-T/ZDZX_Smart_Home](https://github.com/ZDZX-T/ZDZX_Smart_Home)  
+gitee克隆主页[https://gitee.com/ZDZX-T/ZDZX_Smart_Home](https://gitee.com/ZDZX-T/ZDZX_Smart_Home)
 
 ## 使用方法
 
