@@ -1,9 +1,22 @@
+# 修改friendly_name为你喜欢的名称
+substitutions:
+  name: "zdzx-t_hwop"
+  friendly_name: "ZDZX-T_华为欧普智能吸顶灯"
+
 esphome:
-  name: tools-room-light
-  friendly_name: 工具间灯
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  name_add_mac_suffix: true
+  project:
+    name: "ZDZX-T.HWOPLamp"
+    version: "0.3.0"
+  on_boot: 
+    - priority: 1000  #我不知道这对正常启动有没有作用，待后续研究(我担心I2C扫描会使控制板与灯的通信产生异常)
+      then:
+        - delay: 3s
 
 esp32:
-  board: airm2m_core_esp32c3
+  board: esp32-c3-devkitm-1
   framework:
     type: arduino
 
@@ -12,52 +25,39 @@ logger:
 
 # Enable Home Assistant API
 api:
-  encryption:
-    key: "DxJni+yxABtwqjHYWi/if50UHhhfPqVQ7e9n/bo0eXY="
 
 ota:
   - platform: esphome
-    password: "658cc36a3ff6b0a3a5ce1fe99c7e69ab"
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Tools-Room-Light"
-    password: "KOqriYBpCXoU"
+    password: "12345678"
 
 captive_portal:
+    
 
+# ！！！！！！！以下为关键部分，如果通过自己创建配置文件的方式进行部署，则复制下方的代码到你的配置文件即可（esphome->onboot的内容选加，没有证据表明其起效果）
 
 preferences:
   flash_write_interval: 1s
-    
 
-output:  # 仅仅是让俩板载LED别亮
-  - platform: gpio
-    id: LEDD4
-    pin:
-      number: GPIO12
-      ignore_pin_validation_error: true
-  - platform: gpio
-    id: LEDD5
-    pin:
-      number: GPIO13
-      ignore_pin_validation_error: true
-
+uart:
+  tx_pin: GPIO0
+  rx_pin: GPIO1
+  baud_rate: 115200
 
 i2c:
   sda: GPIO4
   scl: GPIO5
   scan: True
 
+ld2420:
 
 i2c_device:
   id: i2c_bus
   address: 0x09  # 需要改为log中的“Found i2c device at address 0xXX”的值
-
 
 switch:
   - platform: template
@@ -71,8 +71,12 @@ switch:
     on_turn_on: 
       then:
         - script.execute: turn_on
+  - platform: gpio
+    pin: GPIO3
+    id: radar_power
+    name: "雷达供电rp"
+    restore_mode: RESTORE_DEFAULT_ON
 
-  
 number:
   - platform: template  # 亮度数值
     max_value: 100
@@ -107,7 +111,20 @@ number:
               - switch.is_on: light_switch
             then: 
               - script.execute: set_color_temperature
-
+  - platform: ld2420
+    presence_timeout:
+      name: Detection Presence Timeout
+    min_gate_distance:
+      name: Detection Gate Minimum
+    max_gate_distance:
+      name: Detection Gate Maximum
+    # See "Number" section below for detail
+    gate_select:
+      name: Select Gate to Set
+    still_threshold:
+      name: Set Still Threshold Value
+    move_threshold:
+      name: Set Move Threshold Value
 
 script:
   - id: turn_off
@@ -153,3 +170,39 @@ script:
           color_low = color_val%256;
           uint8_t data[9] = {0x09, 0x00, 0x13, 0xD0, 0x07, color_low, color_high, 0x00, 0x00};
           id(i2c_bus).write(data, 9);
+
+sensor:
+  - platform: internal_temperature
+    name: "Internal Temperature"
+    update_interval: 60s
+  - platform: ld2420
+    moving_distance:
+      name : Moving Distance
+
+text_sensor:
+  - platform: ld2420
+    fw_version:
+      name: LD2420 Firmware
+
+binary_sensor:
+  - platform: ld2420
+    has_target:
+      name: Presence
+
+select:
+  - platform: ld2420
+    operating_mode:
+      name: Operating Mode
+
+button:
+  - platform: ld2420
+    apply_config:
+      name: Apply Config
+    factory_reset:
+      name: Factory Reset
+    restart_module:
+      name: Restart Module
+    revert_config:
+      name: Undo Edits
+  - platform: restart
+    name: "重启ESP"
