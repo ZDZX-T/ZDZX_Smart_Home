@@ -29,6 +29,10 @@ api:
 ota:
   - platform: esphome
 
+dashboard_import:
+  package_import_url: github://ZDZX-T/ZDZX_Smart_Home/en_path/HWOPLamp.yaml@master
+  import_full_config: True
+
 wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
