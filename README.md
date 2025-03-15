@@ -16,7 +16,7 @@ gitee克隆主页[https://gitee.com/ZDZX-T/ZDZX_Smart_Home](https://gitee.com/ZD
 | [太阳能开窗检测器](太阳能开窗检测器/README.md)                          | DIY一个使用太阳能的开窗检测器，包含ESP配置与原理图       |
 | [esp代码测试](./esp代码测试/README.md)                          | 有时官网文档不能解答全部疑惑，只好动手做实验             |
 | [小爱本地化](./小爱本地化/README.md)                              | 低成本稳定解决小爱接收的语音指令到HA有延迟的问题          |
-| [华为欧普吸顶灯](./华为欧普吸顶灯/README.md)                          | 替换控制盒，使其接入HA（基础代码已完工，配套设置建设中）      |
+| [华为欧普吸顶灯](./华为欧普吸顶灯/README.md)                          | 替换控制盒，使其接入HA。内含全部代码、PCB、外壳         |
 
 ## 提交issue
 
