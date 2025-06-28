@@ -18,6 +18,7 @@ sudo docker pull filebrowser/filebrowser:latest
       - /home/HA/filebrowser:/etc/filebrowser
     command: ["-d", "/etc/filebrowser/database.db"]
     restart: unless-stopped
+    user: root
 ```
 
 ## 启动FileBrowser
