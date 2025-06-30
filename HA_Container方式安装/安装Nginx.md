@@ -37,10 +37,6 @@ server {
     location /nodered/ {
         proxy_pass http://127.0.0.1:1880/;
     }
-    
-    location /filebrowser/ {
-        proxy_pass http://127.0.0.1:50123/;
-    }
 }
 ```
 
@@ -70,3 +66,6 @@ sudo docker compose up -d
 
 ## 修改HA网页仪表盘链接
 所有的链接都仅写Nginx配置文件每条location后的内容，例如ESPHome仅写`/esphome/`，Node-RED仅写`/nodered/`。
+
+## 存在问题
+无法访问Filebrowser，当前的解决方案是单独起frp服务，不跟HA一路。
