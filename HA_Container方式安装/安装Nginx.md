@@ -60,7 +60,7 @@ sudo docker pull nginx
       #- /home/HA/nginx/certs:/etc/nginx/certs  # 如果使用HTTPS请取消注释并正确配置证书
     restart: unless-stopped
     network_mode: host  # 使用host模式
-    user: "${HA_UID}:${HA_GID}"
+    user: root
 ```
 
 ## 启动Nginx
