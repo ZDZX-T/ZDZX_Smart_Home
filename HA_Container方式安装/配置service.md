@@ -105,7 +105,7 @@ auth.token = "p@ssw0rd"  # 鉴权配置
 service配置
 ```text
 [Unit]
-Description = frp HASS server
+Description = Nginx
 After = network.target syslog.target
 Wants = network.target
 
@@ -125,10 +125,10 @@ serverPort = 1357  # 服务端监听端口
 auth.token = "p@ssw0rd"  # 鉴权配置
 
 [[proxies]]
-name = "HomeAssistant"
+name = "Nginx"
 type = "http"
-localIP = "192.168.3.30"  # 局域网HASS IP
-localPort = 8123  # 局域网HASS port
+localIP = "192.168.3.30"  # 局域网Nginx IP
+localPort = 8123  # 局域网Nginx port
 customdomains = ["x.x.x.x"]  # 服务器IP，这样省得设置hosts
 httpUser = "admin"  # 访问鉴权 用户名
 httpPassword = "admin"  # 访问鉴权 密码

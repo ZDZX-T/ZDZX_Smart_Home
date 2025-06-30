@@ -10,6 +10,7 @@ flowchart TD
     D-->G[7.安装Node-RED]
     D-->H[8.安装Mosquitto]
     D-->I[9.安装FileBrowser]
+    C-->J[10.安装Nginx]
 ```
 
 1. [安装Ubuntu Server](./安装Ubuntu_Server.md)
@@ -21,3 +22,4 @@ flowchart TD
 7. [安装Node-RED](./安装Node-RED.md)
 8. [安装Mosquitto](./安装Mosquitto.md)
 9. [安装FileBrowser](./安装FileBrowser.md)
+10. [安装Nginx](./安装Nginx.md)
