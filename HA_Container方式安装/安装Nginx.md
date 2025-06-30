@@ -15,7 +15,7 @@ sudo vim /home/HA/nginx/conf.d/default.conf
 ```text
 server {
     listen 80;
-    server_name x.x.x.x;  # 替换为你的域名或公网IP地址，以空格分隔可以填多个
+    server_name x.x.x.x;  # 替换为你的域名或IP地址，
     
     # 所有代理通用设置
     proxy_http_version 1.1;
