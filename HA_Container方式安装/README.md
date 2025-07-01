@@ -1,5 +1,8 @@
 # 树莓派 + Ubuntu Server + HA Container 安装指南
 
+b站视频链接[https://www.bilibili.com/video/BV1G6gQzVEgF/?share_source=copy_web&vd_source=d17175c986cec83b4c79184b625c9ea2](https://www.bilibili.com/video/BV1G6gQzVEgF/?share_source=copy_web&vd_source=d17175c986cec83b4c79184b625c9ea2)  
+权威性优先级：官网内容>我的文字内容>我的视频内容
+
 ```mermaid
 flowchart TD
     A[1.安装Ubuntu Server] -->B[2.安装docker]
