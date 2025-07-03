@@ -126,12 +126,16 @@ auth.token = "p@ssw0rd"  # 鉴权配置
 
 [[proxies]]
 name = "Nginx"
-type = "http"
-localIP = "192.168.3.30"  # 局域网Nginx IP
-localPort = 8123  # 局域网Nginx port
+type = "http"  # 使用http2https插件
+# localIP = "192.168.3.30"  # 局域网Nginx IP
+# localPort = 443  # 局域网Nginx port
 customdomains = ["x.x.x.x"]  # 服务器IP，这样省得设置hosts
 httpUser = "admin"  # 访问鉴权 用户名
 httpPassword = "admin"  # 访问鉴权 密码
+
+[proxies.plugin]
+type = "http2https"
+localAddr = "192.168.3.30:443"  # 替换为你的https IP和端口
 ```
 在此之后，需要在HomeAssistant的`/config/configuration.yaml`添加以下内容
 ```yaml

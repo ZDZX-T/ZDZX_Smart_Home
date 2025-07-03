@@ -21,7 +21,7 @@ sudo docker pull ghcr.io/esphome/esphome
     #   - "6052:6052"  # Web UI
     #   - "6053:6053"  # API
     restart: unless-stopped
-    user: "${HA_UID}:${HA_GID}"  # 可选
+    user: root  # 可选
     # privileged: true  # 需要刷写固件可以改成挂载具体设备
     # environment:  # 可选
     #   - USERNAME=test

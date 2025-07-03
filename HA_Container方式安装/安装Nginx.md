@@ -1,5 +1,4 @@
 # 安装Nginx
-Nginx主要用来解决内网穿透后从外部访问HA时无法正确带出ESPHome、Node-RED等网页的问题。如果仅在局域网内使用则无需配置。
 
 ## 修改Nginx目录权限
 ```shell
@@ -15,8 +14,8 @@ sudo vim /home/HA/nginx/conf.d/default.conf
 ```text
 server {
     listen 80;
-    server_name x.x.x.x;  # 替换为你的域名或IP地址，即frpc填的localIP项内容
-    
+    server_name x.x.x.x;  # 替换为你的域名或IP地址，空格隔开可填多个
+
     # 所有代理通用设置
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -29,7 +28,7 @@ server {
     location / {
         proxy_pass http://127.0.0.1:8123;
     }
-    
+
     location /esphome/ {
         proxy_pass http://127.0.0.1:6052/;
     }
@@ -53,7 +52,7 @@ sudo docker pull nginx
     image: "nginx:latest"
     volumes:
       - /home/HA/nginx/conf.d:/etc/nginx/conf.d
-      #- /home/HA/nginx/certs:/etc/nginx/certs  # 如果使用HTTPS请取消注释并正确配置证书
+      # - /home/HA/nginx/certs:/etc/nginx/certs  # 如果使用HTTPS请取消注释并正确配置证书
     restart: unless-stopped
     network_mode: host  # 使用host模式
     user: root
@@ -64,8 +63,5 @@ sudo docker pull nginx
 sudo docker compose up -d
 ```
 
-## 修改HA网页仪表盘链接
-所有的链接都仅写Nginx配置文件每条location后的内容，例如ESPHome仅写`/esphome/`，Node-RED仅写`/nodered/`。
-
-## 存在问题
-无法访问Filebrowser，当前的解决方案是单独起frp服务，不跟HA一路。
+## 更新HA中ESPHome和Node-RED的链接
+ESPHome的链接设为`/esphome/`，不要有任何其他内容。Node-RED同理设为`/nodered`
