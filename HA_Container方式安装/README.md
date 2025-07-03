@@ -8,14 +8,14 @@ b站视频链接[https://www.bilibili.com/video/BV1G6gQzVEgF/?share_source=copy_
 ```mermaid
 flowchart TD
     A[1.安装Ubuntu Server] -->B[2.安装docker]
-    A-->C[3.（已停用）配置service]
+    A-->C[3.**已停用**配置service]
     B-->D[4.安装HA Container]
     D-->E[5.安装HACS]
     D-->F[6.安装ESPHome]
     D-->G[7.安装Node-RED]
     D-->H[8.安装Mosquitto]
     D-->I[9.安装FileBrowser]
-    C-->J[10.（已停用）安装Nginx]
+    C-->J[10.**已停用**安装Nginx]
 ```
 
 1. [安装Ubuntu Server](./安装Ubuntu_Server.md)
