@@ -112,9 +112,17 @@ sudo systemctl start HomeAssistant.service
 
 ## 未来更新HA
 ```shell
-# Step 1: 拉取最新的 stable 镜像
-docker compose pull homeassistant
-
-# Step 2: 重启 homeassistant 容器（仅此服务）
-docker compose restart homeassistant
+cd /home/HA
+# Step 1: 拉取最新的 stable 镜像，如果显示"Image is up to date"说明不用更新
+sudo docker pull ghcr.io/home-assistant/home-assistant:stable
+# 更新容器
+sudo docker compose stop homeassistant
+sudo docker compose rm -f homeassistant
+sudo docker compose up -d homeassistant
+```
+如果要更新所有镜像，那么直接
+```shell
+sudo docker compose pull
+sudo docker compose down
+sudo docker compose up -d
 ```
