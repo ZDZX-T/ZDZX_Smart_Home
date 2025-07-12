@@ -48,11 +48,10 @@ Node-RED界面`右上角三条杠->设置->控制板->安装`，搜索安装以�
 7. node-red-contrib-interval-length
 8. node-red-contrib-persistent-fsm
 9. node-red-contrib-sunevents
-10. node-red-contrib-time-range-switch
-11. node-red-node-ping
-12. node-red-node-random
-13. node-red-node-smooth
-14. node-red-node-suncalc
+10. node-red-node-ping
+11. node-red-node-random
+12. node-red-node-smooth
+13. node-red-node-suncalc
 
 ## 添加Home Assistant server节点
 ### 获取HA令牌
