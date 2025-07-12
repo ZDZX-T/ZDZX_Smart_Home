@@ -15,7 +15,6 @@ sudo docker pull ghcr.io/esphome/esphome
     image: ghcr.io/esphome/esphome
     volumes:
       - /home/HA/esphome:/config
-      - /home/HA/esphome/.platformio:/root/.platformio
       - /etc/localtime:/etc/localtime:ro
     network_mode: host  # 因为需要发现网络设备，所以网络模式是host
     # ports:
