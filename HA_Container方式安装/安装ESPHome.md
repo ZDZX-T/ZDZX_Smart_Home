@@ -42,3 +42,6 @@ sudo docker compose up -d
 ## 将ESPHome集成到HA
 在HA的`设置->仪表盘->添加仪表盘->网页`写上ESPHome的网址，点击下一步  
 名称填ESPHome，图标搜chip，然后第三个网址用默认的dashboard-esphome即可
+
+## 可能的github无法连接造成烧录失败的解决方案（未进行100%验证）
+[https://lxblog.com/qianwen/share?shareId=57b8dd66-ab60-40fb-a60f-e2d5135f12e7](https://lxblog.com/qianwen/share?shareId=57b8dd66-ab60-40fb-a60f-e2d5135f12e7)
